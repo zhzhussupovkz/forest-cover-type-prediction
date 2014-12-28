@@ -48,14 +48,6 @@ def plot_elevation():
     f = e.get_figure()
     f.savefig('./train_data_plot/elevation_cover_type.png')
 
-# def plot_box_elevation():
-#     print "plot box elevation..."
-#     data = read_csv("./train.csv")
-#     df = concat([data['Elevation'], data['Cover_Type']], axis=1, keys=['Elevation', 'Cover_Type'])
-#     f = plt.figure(figsize=(8, 6))
-#     p = df.boxplot(by='Cover_Type', ax = f.gca())
-#     f.savefig('./train_data_plot/box_elevation_cover_type.png')
-
 def plot_aspect():
     data = read_csv('./train.csv')
     data = data.sort(['Aspect'])
@@ -109,7 +101,7 @@ def plot_horizontal_distance_to_roadways():
 def plot_box():
 
     data = read_csv("./train.csv")
-    headers = ['Elevation', 'Aspect', 'Horizontal_Distance_To_Hydrology', 'Vertical_Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways']
+    headers = ['Elevation', 'Slope', 'Aspect', 'Horizontal_Distance_To_Hydrology', 'Vertical_Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways']
 
     for k in headers:
         print "box plot %s..." % k.lower().replace("_", " ")
