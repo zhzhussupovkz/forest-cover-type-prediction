@@ -250,12 +250,12 @@ def go():
 
     print 'RFC...'
     test, result = get_test_data()
-    test = test.drop(['Vertical_Distance_To_Hydrology'], axis = 1)
+    test = test.drop(['Vertical_Distance_To_Hydrology', 'Slope'], axis = 1)
     target = data.Cover_Type
-    train = data.drop(['Cover_Type', 'Vertical_Distance_To_Hydrology'], axis = 1)
+    train = data.drop(['Cover_Type', 'Vertical_Distance_To_Hydrology', 'Slope'], axis = 1)
     model_rfc.fit(train, target)
     result.insert(1,'Cover_Type', model_rfc.predict(test))
-    result.to_csv('./test_rfc_4.csv', index=False)
+    result.to_csv('./test_rfc_5.csv', index=False)
 
 def go_gbc():
     data = get_train_data()
