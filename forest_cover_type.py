@@ -118,7 +118,7 @@ def get_train_data():
     data = data.drop(['Id'], axis = 1)
 
     # удаляем столбец Wilderness_Area2
-    data = data.drop(['Wilderness_Area2'], axis = 1)
+    data = data.drop(['Wilderness_Area2', 'Vertical_Distance_To_Hydrology', 'Slope'], axis = 1)
 
     # удаляем столбцы SoilType1,...,SoilType40
     drop_soil_type_cols = []
@@ -136,7 +136,7 @@ def get_test_data():
     result = DataFrame(data.Id)
 
     # удаляем столбцы Id, Wilderness_Area2
-    data = data.drop(['Id', 'Wilderness_Area2'], axis = 1)
+    data = data.drop(['Id', 'Wilderness_Area2', 'Vertical_Distance_To_Hydrology', 'Slope'], axis = 1)
 
     # удаляем столбцы SoilType1,...,SoilType40
     drop_soil_type_cols = []
@@ -155,34 +155,18 @@ def cross_validation_test():
     cross_val_final = {}
 
     print 'Cross validation test...'
-    model_rfc = RandomForestClassifier(n_estimators = 1000, criterion='entropy', n_jobs = -1)
-    # model_etc = ExtraTreesClassifier(n_estimators = 100)
-    # model_dtc = DecisionTreeClassifier(max_depth = None, min_samples_split=1, random_state=0)
-    # model_knc = KNeighborsClassifier(n_neighbors = 18)
+    model_rfc = RandomForestClassifier(n_estimators = 1024, criterion='entropy', n_jobs = -1)
+    model_knc = KNeighborsClassifier(n_neighbors = 128)
     model_lr = LogisticRegression(penalty='l1', C=1e5)
-    # model_nbc = GaussianNB()
-    model_svc = svm.SVC(kernel = "poly", degree = 2)
 
     scores = cross_validation.cross_val_score(model_rfc, train, target, cv = kfold)
     cross_val_final['RFC'] = scores.mean()
     print 'RFC: ', scores.mean()
 
-    # scores = cross_validation.cross_val_score(model_nbc, train, target, cv = kfold)
-    # cross_val_final['NBC'] = scores.mean()
-    # print 'NBC: ', scores.mean()
+    scores = cross_validation.cross_val_score(model_knc, train, target, cv = kfold)
+    cross_val_final['KNC'] = scores.mean()
+    print 'KNC: ', scores.mean()
 
-    # scores = cross_validation.cross_val_score(model_etc, train, target, cv = kfold)
-    # cross_val_final['ETC'] = scores.mean()
-
-    # scores = cross_validation.cross_val_score(model_dtc, train, target, cv = kfold)
-    # cross_val_final['DTC'] = scores.mean()
-
-    # scores = cross_validation.cross_val_score(model_knc, train, target, cv = kfold)
-    # cross_val_final['KNC'] = scores.mean()
-
-    scores = cross_validation.cross_val_score(model_svc, train, target, cv = kfold)
-    cross_val_final['SVC'] = scores.mean()
-    print 'SVM: ', scores.mean()
 
     scores = cross_validation.cross_val_score(model_lr, train, target, cv = kfold)
     cross_val_final['LR'] = scores.mean()
@@ -190,45 +174,7 @@ def cross_validation_test():
 
     f = plt.figure(figsize = (8, 6))
     p = DataFrame.from_dict(data = cross_val_final, orient='index').plot(kind='barh', legend=False, ax = f.gca())
-    f.savefig('./test_plot/cross_validation_rfc_svm.png')
-
-def get_scores():
-    data = get_train_data()
-    target = data.Cover_Type
-    train = data.drop(['Cover_Type'], axis = 1)
-    all_scores = {}
-
-    print 'Get scores...'
-
-    model_rfc = RandomForestClassifier(n_estimators = 100)
-    model_etc = ExtraTreesClassifier(n_estimators = 100)
-    model_dtc = DecisionTreeClassifier(max_depth = None, min_samples_split=1, random_state=0)
-    model_knc = KNeighborsClassifier(n_neighbors = 18)
-    model_svc = svm.SVC()
-
-    TRNtrain, TRNtest, TARtrain, TARtest = cross_validation.train_test_split(train, target, test_size=0.4)
-
-    model_rfc.fit(TRNtrain, TARtrain)
-    model_etc.fit(TRNtrain, TARtrain)
-    model_dtc.fit(TRNtrain, TARtrain)
-    model_knc.fit(TRNtrain, TARtrain)
-    model_svc.fit(TRNtrain, TARtrain)
-
-    all_scores['RFC'] = accuracy_score(TARtest, model_rfc.predict(TRNtest))
-    all_scores['ETC'] = accuracy_score(TARtest, model_etc.predict(TRNtest))
-    all_scores['DTC'] = accuracy_score(TARtest, model_dtc.predict(TRNtest))
-    all_scores['KNC'] = accuracy_score(TARtest, model_knc.predict(TRNtest))
-    all_scores['SVC'] = accuracy_score(TARtest, model_svc.predict(TRNtest))
-
-    f = plt.figure(figsize = (8, 6))
-    p = DataFrame.from_dict(data = all_scores, orient='index').plot(kind='barh', legend=False, ax = f.gca())
-    f.savefig('./test_plot/scores.png')
-
-    # print 'RFC: ', accuracy_score(TARtest, model_rfc.predict(TRNtest))
-    # print 'ETC: ', accuracy_score(TARtest, model_etc.predict(TRNtest))
-    # print 'DTC: ', accuracy_score(TARtest, model_dtc.predict(TRNtest))
-    # print 'KNC: ', accuracy_score(TARtest, model_knc.predict(TRNtest))
-    # print 'SVC: ', accuracy_score(TARtest, model_svc.predict(TRNtest))
+    f.savefig('./test_plot/cross_validation_rfc_1024.png')
 
 # финальная функция
 def go():
@@ -241,14 +187,14 @@ def go():
 
     print 'RFC...'
     test, result = get_test_data()
-    test = test.drop(['Vertical_Distance_To_Hydrology', 'Slope'], axis = 1)
     target = data.Cover_Type
-    train = data.drop(['Cover_Type', 'Vertical_Distance_To_Hydrology', 'Slope'], axis = 1)
+    test = test.drop(['Aspect'], axis = 1)
+    train = data.drop(['Cover_Type', 'Aspect'], axis = 1)
 
     print "..."
     model_rfc.fit(train, target)
     result.insert(1,'Cover_Type', model_rfc.predict(test))
-    result.to_csv('./test_rfc_6.csv', index=False)
+    result.to_csv('./test_rfc_1024_1.csv', index=False)
 
 def go_gbc():
     data = get_train_data()
@@ -288,7 +234,6 @@ def grid_search_test():
 # plot_vertical_distance_to_hydrology()
 # plot_horizontal_distance_to_roadways()
 # plot_train()
-# get_scores()
 # cross_validation_test()
 # grid_search_test()
 go()
