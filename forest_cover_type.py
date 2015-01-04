@@ -235,24 +235,17 @@ def go():
     data = get_train_data()
 
     model_rfc = RandomForestClassifier(n_estimators = 1024, criterion = 'entropy', n_jobs = -1)
-    # model_etc = ExtraTreesClassifier(n_estimators = 100, criterion = 'entropy')
 
-    # так как лучшие результаты у Extra Trees и Random Forest
+    # так как лучшие результаты у Random Forest
     print 'Go!!!'
-
-    # print 'ETC...'
-    # test, result = get_test_data()
-    # target = data.Cover_Type
-    # train = data.drop(['Cover_Type'], axis = 1)
-    # model_rfc.fit(train, target)
-    # result.insert(1,'Cover_Type', model_etc.predict(test))
-    # result.to_csv('./test_etc.csv', index=False)
 
     print 'RFC...'
     test, result = get_test_data()
     test = test.drop(['Vertical_Distance_To_Hydrology', 'Slope'], axis = 1)
     target = data.Cover_Type
     train = data.drop(['Cover_Type', 'Vertical_Distance_To_Hydrology', 'Slope'], axis = 1)
+
+    print "..."
     model_rfc.fit(train, target)
     result.insert(1,'Cover_Type', model_rfc.predict(test))
     result.to_csv('./test_rfc_6.csv', index=False)
