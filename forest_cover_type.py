@@ -234,7 +234,7 @@ def get_scores():
 def go():
     data = get_train_data()
 
-    model_rfc = RandomForestClassifier(n_estimators = 1000, criterion = 'entropy', n_jobs = -1)
+    model_rfc = RandomForestClassifier(n_estimators = 1024, criterion = 'entropy', n_jobs = -1)
     # model_etc = ExtraTreesClassifier(n_estimators = 100, criterion = 'entropy')
 
     # так как лучшие результаты у Extra Trees и Random Forest
@@ -255,7 +255,7 @@ def go():
     train = data.drop(['Cover_Type', 'Vertical_Distance_To_Hydrology', 'Slope'], axis = 1)
     model_rfc.fit(train, target)
     result.insert(1,'Cover_Type', model_rfc.predict(test))
-    result.to_csv('./test_rfc_5.csv', index=False)
+    result.to_csv('./test_rfc_6.csv', index=False)
 
 def go_gbc():
     data = get_train_data()
