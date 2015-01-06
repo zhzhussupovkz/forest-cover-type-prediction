@@ -180,7 +180,7 @@ def cross_validation_test():
 def go():
     data = get_train_data()
 
-    model_rfc = RandomForestClassifier(n_estimators = 1024, criterion = 'entropy', n_jobs = -1)
+    model_rfc = RandomForestClassifier(n_estimators = 2500, criterion = 'entropy', n_jobs = -1)
 
     # так как лучшие результаты у Random Forest
     print 'Go!!!'
@@ -194,7 +194,7 @@ def go():
     print "..."
     model_rfc.fit(train, target)
     result.insert(1,'Cover_Type', model_rfc.predict(test))
-    result.to_csv('./test_rfc_1024_1.csv', index=False)
+    result.to_csv('./test_rfc_2500.csv', index=False)
 
 def go_gbc():
     data = get_train_data()
