@@ -102,6 +102,7 @@ def plot_box():
 
     data = read_csv("./train.csv")
     headers = ['Elevation', 'Slope', 'Aspect', 'Horizontal_Distance_To_Hydrology', 'Vertical_Distance_To_Hydrology', 'Horizontal_Distance_To_Roadways']
+    headers += ['Hillshade_9am', 'Hillshade_Noon', 'Hillshade_3pm', 'Horizontal_Distance_To_Fire_Points']
 
     for k in headers:
         print "box plot %s..." % k.lower().replace("_", " ")
@@ -119,6 +120,7 @@ def get_train_data():
 
     # удаляем столбец Wilderness_Area2
     data = data.drop(['Wilderness_Area2', 'Vertical_Distance_To_Hydrology', 'Slope'], axis = 1)
+    # data = data.drop(['Hillshade_9am', 'Hillshade_Noon', 'Hillshade_3pm'], axis = 1)
 
     # удаляем столбцы SoilType1,...,SoilType40
     drop_soil_type_cols = []
@@ -137,6 +139,7 @@ def get_test_data():
 
     # удаляем столбцы Id, Wilderness_Area2
     data = data.drop(['Id', 'Wilderness_Area2', 'Vertical_Distance_To_Hydrology', 'Slope'], axis = 1)
+    # data = data.drop(['Hillshade_9am', 'Hillshade_Noon', 'Hillshade_3pm'], axis = 1)
 
     # удаляем столбцы SoilType1,...,SoilType40
     drop_soil_type_cols = []
@@ -194,7 +197,7 @@ def go():
     print "..."
     model_rfc.fit(train, target)
     result.insert(1,'Cover_Type', model_rfc.predict(test))
-    result.to_csv('./test_rfc_2500.csv', index=False)
+    result.to_csv('./test_rfc_2500_new.csv', index=False)
 
 def go_gbc():
     data = get_train_data()
@@ -236,6 +239,11 @@ def grid_search_test():
 # plot_train()
 # cross_validation_test()
 # grid_search_test()
-go()
+# go()
 # go_gbc()
 # plot_box()
+
+# data = get_train_data()
+# train = data.drop(['Cover_Type', 'Aspect'], axis = 1)
+# print train.head()
+
